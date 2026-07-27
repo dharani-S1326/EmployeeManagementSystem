@@ -1,0 +1,18 @@
+# Angular
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+
+# Visual Studio
+.vs/
+
+# .NET
+**/bin/
+**/obj/
+
+# Logs
+*.log
+
+# User files
+*.user
+*.suo

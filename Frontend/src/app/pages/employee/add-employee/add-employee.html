@@ -1,0 +1,65 @@
+<div class="page-container">
+  <div class="container">
+    <h2>Add Employee</h2>
+
+    <!-- SUCCESS MESSAGE -->
+
+    <div class="toast" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <!-- ERROR MESSAGE -->
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <app-dynamic-form
+      [fields]="employeeFormFields"
+      (formReady)="onFormReady($event)"
+      (fieldChanged)="onFieldChanged($event)"
+    >
+    </app-dynamic-form>
+
+    <!-- PASSWORD MISMATCH -->
+
+    <div
+      class="error"
+      *ngIf="
+        employeeForm &&
+        employeeForm.get('confirmPassword')?.touched &&
+        employeeForm.get('confirmPassword')?.value &&
+        employeeForm.get('password')?.value !== employeeForm.get('confirmPassword')?.value
+      "
+    >
+      Passwords do not match.
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="button-group">
+      <app-button
+        text="Cancel"
+        type="button"
+        variant="danger"
+        [disabled]="isSubmitting"
+        (buttonClick)="cancel()"
+      >
+      </app-button>
+
+      <app-button
+        [text]="isSubmitting ? 'Saving...' : 'Save Employee'"
+        type="button"
+        variant="primary"
+        [disabled]="
+          !employeeForm ||
+          employeeForm.invalid ||
+          employeeForm.get('password')?.value !== employeeForm.get('confirmPassword')?.value ||
+          isSubmitting
+        "
+        (buttonClick)="saveEmployee()"
+      >
+      </app-button>
+    </div>
+  </div>
+</div>

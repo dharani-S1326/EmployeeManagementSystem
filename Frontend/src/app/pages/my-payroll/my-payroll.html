@@ -1,0 +1,91 @@
+<app-header></app-header>
+
+<div class="employee-layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="container">
+    <div class="page-header">
+      <div>
+        <h2>My Payroll</h2>
+
+        <p>View your salary and payroll details</p>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+
+    <div class="loading-message" *ngIf="isLoading">Loading your payroll...</div>
+
+    <!-- PAYROLL TABLE -->
+
+    <div class="table-container" *ngIf="!isLoading && payrolls.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+
+            <th>Basic Salary</th>
+
+            <th>Allowance</th>
+
+            <th>Bonus</th>
+
+            <th>Deduction</th>
+
+            <th>Tax</th>
+
+            <th>Net Salary</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let payroll of payrolls; let i = index">
+            <td>{{ i + 1 }}</td>
+
+            <td>₹{{ payroll.basicSalary | number }}</td>
+
+            <td>₹{{ payroll.allowance | number }}</td>
+
+            <td>₹{{ payroll.bonus | number }}</td>
+
+            <td>₹{{ payroll.deduction | number }}</td>
+
+            <td>₹{{ payroll.tax | number }}</td>
+
+            <td class="net-salary">₹{{ payroll.netSalary | number }}</td>
+
+            <td>
+              <span
+                class="status"
+                [class.paid]="payroll.paymentStatus === 'Paid'"
+                [class.pending]="payroll.paymentStatus !== 'Paid'"
+              >
+                {{ payroll.paymentStatus }}
+              </span>
+            </td>
+
+            <td>
+              {{ payroll.paymentDate | date: 'dd-MM-yyyy' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- NO PAYROLL -->
+
+    <div class="no-payroll" *ngIf="!isLoading && payrolls.length === 0">
+      <span class="material-icons"> payments </span>
+
+      <h3>No Payroll Available</h3>
+
+      <p>Your payroll has not been generated yet.</p>
+    </div>
+  </main>
+</div>
+
+<app-footer></app-footer>

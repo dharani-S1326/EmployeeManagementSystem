@@ -1,0 +1,136 @@
+<app-toast [visible]="toastVisible" [message]="toastMessage" [type]="toastType"> </app-toast>
+
+<div class="profile-page">
+  <div class="loader-wrap" *ngIf="loadingProfile">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+
+  <div class="profile-card" *ngIf="!loadingProfile && profile">
+    <div class="avatar-section">
+      <div class="avatar-wrap">
+        <img
+          [src]="
+            profile?.profileImageUrl ||
+            'https://ui-avatars.com/api/?background=6D5BD0&color=fff&name=' + profile?.fullName
+          "
+          class="profile-avatar"
+        />
+        alt="Profile picture" class="avatar">
+
+        <label class="avatar-edit-btn" for="profileImageInput" *ngIf="editMode">
+          <span class="material-icons">photo_camera</span>
+        </label>
+
+        <input
+          id="profileImageInput"
+          type="file"
+          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+          (change)="onFileSelected($event)"
+          hidden
+          *ngIf="editMode"
+        />
+      </div>
+
+      <h2>{{ editMode ? profileForm.value.fullName || profile.fullName : profile.fullName }}</h2>
+      <span class="badge" [class.active]="profile.isActive" [class.inactive]="!profile.isActive">
+        {{ profile.isActive ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="save()">
+      <div class="details-grid">
+        <div class="field">
+          <label>Role</label>
+          <p class="static-value">{{ profile.role }}</p>
+        </div>
+
+        <ng-container *ngIf="editMode; else nameView">
+          <app-form-field
+            label="Full Name"
+            placeholder="Enter Name"
+            [control]="$any(profileForm.controls.fullName)"
+            errorMessage="Name must be at least 3 characters"
+          >
+          </app-form-field>
+        </ng-container>
+        <ng-template #nameView>
+          <div class="field">
+            <label>Employee Name</label>
+            <p class="static-value">{{ profile.fullName }}</p>
+          </div>
+        </ng-template>
+
+        <ng-container *ngIf="editMode; else emailView">
+          <app-form-field
+            label="Email"
+            type="email"
+            placeholder="Enter Email"
+            [control]="$any(profileForm.controls.email)"
+            errorMessage="Please enter a valid email"
+          >
+          </app-form-field>
+        </ng-container>
+        <ng-template #emailView>
+          <div class="field">
+            <label>Email</label>
+            <p class="static-value">{{ profile.email }}</p>
+          </div>
+        </ng-template>
+
+        <ng-container *ngIf="editMode; else phoneView">
+          <app-form-field
+            label="Phone Number"
+            placeholder="Enter Phone Number"
+            [control]="$any(profileForm.controls.phoneNumber)"
+            errorMessage="Enter a valid 10-digit phone number"
+          >
+          </app-form-field>
+        </ng-container>
+        <ng-template #phoneView>
+          <div class="field">
+            <label>Phone Number</label>
+            <p class="static-value">{{ profile.phoneNumber }}</p>
+          </div>
+        </ng-template>
+
+        <div class="field">
+          <label>Department</label>
+          <p class="static-value">{{ profile.department }}</p>
+        </div>
+
+        <div class="field">
+          <label>Designation</label>
+          <p class="static-value">{{ profile.designation }}</p>
+        </div>
+
+        <div class="field">
+          <label>Salary</label>
+          <p class="static-value">{{ profile.salary | currency: 'INR' : 'symbol' : '1.0-0' }}</p>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <ng-container *ngIf="!editMode">
+          <app-button text="Edit Profile" type="button" variant="primary" (click)="enterEditMode()">
+          </app-button>
+        </ng-container>
+
+        <ng-container *ngIf="editMode">
+          <app-button text="Cancel" type="button" variant="secondary" (click)="cancel()">
+          </app-button>
+
+          <app-button
+            [text]="saving ? 'Saving...' : 'Save Changes'"
+            type="submit"
+            variant="primary"
+            [disabled]="saving"
+          >
+          </app-button>
+
+          <span class="mini-spinner" *ngIf="saving"></span>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+</div>

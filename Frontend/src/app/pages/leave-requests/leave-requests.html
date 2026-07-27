@@ -1,0 +1,419 @@
+<app-header></app-header>
+
+<div class="leave-layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="leave-container">
+    <div class="page-header">
+      <div class="page-title">
+        <h2>Leave Requests</h2>
+
+        <p>Review and manage employee leave requests</p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <!-- TOTAL -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === ''"
+        (click)="filterByStatus('')"
+      >
+        <div class="summary-icon total">
+          <span class="material-icons"> calendar_month </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Total Requests</p>
+
+          <h2>
+            {{ totalLeaves }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- PENDING -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'pending'"
+        (click)="filterByStatus('pending')"
+      >
+        <div class="summary-icon pending">
+          <span class="material-icons"> schedule </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Pending</p>
+
+          <h2>
+            {{ pendingCount }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- APPROVED -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'approved'"
+        (click)="filterByStatus('approved')"
+      >
+        <div class="summary-icon approved">
+          <span class="material-icons"> check_circle </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Approved</p>
+
+          <h2>
+            {{ approvedCount }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- REJECTED -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'rejected'"
+        (click)="filterByStatus('rejected')"
+      >
+        <div class="summary-icon rejected">
+          <span class="material-icons"> cancel </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Rejected</p>
+
+          <h2>
+            {{ rejectedCount }}
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="leave-card">
+      <!-- SEARCH -->
+
+      <div class="table-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+
+          <input
+            type="text"
+            placeholder="Search employee, leave type..."
+            [(ngModel)]="searchText"
+            (input)="onSearchChange()"
+          />
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Emp ID</th>
+
+              <th>Employee</th>
+
+              <th>Leave Type</th>
+
+              <th>From Date</th>
+
+              <th>To Date</th>
+
+              <th>Days</th>
+
+              <th>Reason</th>
+
+              <th>Status</th>
+
+              <th class="action-heading">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- LEAVE ROWS -->
+
+            <tr *ngFor="let leave of displayedLeaves; trackBy: trackByLeaveId">
+              <!-- EMPLOYEE ID -->
+
+              <td>
+                {{ leave.employeeId }}
+              </td>
+
+              <!-- EMPLOYEE -->
+
+              <td>
+                <div class="employee-info">
+                  <div class="employee-avatar">
+                    {{ leave.employeeName ? leave.employeeName.charAt(0) : 'E' }}
+                  </div>
+
+                  <span class="employee-name">
+                    {{ leave.employeeName || 'Employee' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- LEAVE TYPE -->
+
+              <td>
+                {{ leave.leaveType }}
+              </td>
+
+              <!-- FROM DATE -->
+
+              <td>
+                {{ leave.fromDate | date: 'dd MMM yyyy' }}
+              </td>
+
+              <!-- TO DATE -->
+
+              <td>
+                {{ leave.toDate | date: 'dd MMM yyyy' }}
+              </td>
+
+              <!-- DAYS -->
+
+              <td>
+                <span class="days-badge">
+                  {{ leave.noOfDays }}
+                </span>
+              </td>
+
+              <!-- REASON -->
+
+              <td>
+                <div class="reason-text" [title]="leave.reason">
+                  {{ leave.reason }}
+                </div>
+              </td>
+
+              <!-- STATUS -->
+
+              <td>
+                <span class="status-badge" [ngClass]="leave.status?.toLowerCase()">
+                  {{ leave.status }}
+                </span>
+              </td>
+
+              <!-- ACTION -->
+
+              <td>
+                <div class="action-buttons">
+                  <!-- MEDICAL CERTIFICATE -->
+
+                  <app-button
+                    *ngIf="leave.medicalCertificatePath"
+                    text="Certificate"
+                    variant="primary"
+                    icon="bi bi-file-earmark-medical"
+                    (buttonClick)="viewMedicalCertificate(leave.medicalCertificatePath)"
+                  >
+                  </app-button>
+
+                  <!-- PENDING ACTION -->
+
+                  <ng-container *ngIf="leave.status?.toLowerCase() === 'pending'">
+                    <app-button
+                      text="Approve"
+                      variant="success"
+                      icon="bi bi-check-lg"
+                      (buttonClick)="openApprovalModal(leave, 'approve')"
+                    >
+                    </app-button>
+
+                    <app-button
+                      text="Reject"
+                      variant="danger"
+                      icon="bi bi-x-lg"
+                      (buttonClick)="openApprovalModal(leave, 'reject')"
+                    >
+                    </app-button>
+                  </ng-container>
+
+                  <!-- COMPLETED ACTION -->
+
+                  <span class="action-completed" *ngIf="leave.status?.toLowerCase() !== 'pending'">
+                    <i class="bi bi-check-circle-fill"> </i>
+
+                    Completed
+                  </span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- NO DATA -->
+
+            <tr *ngIf="displayedLeaves.length === 0">
+              <td colspan="9" class="empty-cell">No leave requests found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" *ngIf="totalPages > 1">
+        <!-- FIRST PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(1)"
+          [disabled]="pageNumber === 1"
+        >
+          «
+        </button>
+
+        <!-- PREVIOUS PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(pageNumber - 1)"
+          [disabled]="pageNumber === 1"
+        >
+          ‹
+        </button>
+
+        <!-- PAGE NUMBERS -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          *ngFor="let page of pages"
+          (click)="changePage(page)"
+          [class.active]="pageNumber === page"
+        >
+          {{ page }}
+        </button>
+
+        <!-- NEXT PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(pageNumber + 1)"
+          [disabled]="pageNumber === totalPages"
+        >
+          ›
+        </button>
+
+        <!-- LAST PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(totalPages)"
+          [disabled]="pageNumber === totalPages"
+        >
+          »
+        </button>
+      </div>
+
+      <div class="pagination-info" *ngIf="filteredLeaves.length > 0">
+        Page {{ pageNumber }} of {{ totalPages }}
+
+        — Total Requests:
+        {{ filteredLeaves.length }}
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" *ngIf="showApprovalModal" (click)="closeModalOnBackdrop()">
+  <div class="modal-container approval-modal" (click)="stopPropagation($event)">
+    <!-- MODAL HEADER -->
+
+    <div class="modal-header">
+      <div>
+        <h2>
+          {{ approvalAction === 'approve' ? 'Approve Leave' : 'Reject Leave' }}
+        </h2>
+
+        <p *ngIf="selectedLeave">
+          {{ selectedLeave.employeeName }}
+
+          •
+
+          {{ selectedLeave.leaveType }}
+        </p>
+      </div>
+
+      <button type="button" class="close-button" (click)="closeApprovalModal()">×</button>
+    </div>
+
+    <!-- LEAVE DETAILS -->
+
+    <div class="approval-details" *ngIf="selectedLeave">
+      <div>
+        <span> From Date </span>
+
+        <strong>
+          {{ selectedLeave.fromDate | date: 'dd MMM yyyy' }}
+        </strong>
+      </div>
+
+      <div>
+        <span> To Date </span>
+
+        <strong>
+          {{ selectedLeave.toDate | date: 'dd MMM yyyy' }}
+        </strong>
+      </div>
+
+      <div>
+        <span> Total Days </span>
+
+        <strong>
+          {{ selectedLeave.noOfDays }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- APPROVAL FORM -->
+
+    <form [formGroup]="approvalForm" (ngSubmit)="submitApproval()">
+      <app-form-field
+        label="Remarks"
+        type="textarea"
+        placeholder="Enter approval or rejection remarks"
+        [control]="remarksControl"
+      >
+      </app-form-field>
+
+      <!-- MODAL BUTTONS -->
+
+      <div class="modal-footer">
+        <app-button
+          text="Cancel"
+          type="button"
+          variant="outline"
+          [disabled]="isSubmitting"
+          (buttonClick)="closeApprovalModal()"
+        >
+        </app-button>
+
+        <app-button
+          [text]="
+            isSubmitting
+              ? 'Processing...'
+              : approvalAction === 'approve'
+                ? 'Approve Leave'
+                : 'Reject Leave'
+          "
+          type="submit"
+          [variant]="approvalAction === 'approve' ? 'success' : 'danger'"
+          [disabled]="isSubmitting"
+        >
+        </app-button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-toast [visible]="toastVisible" [message]="toastMessage" [type]="toastType"> </app-toast>
+
+<app-footer></app-footer>

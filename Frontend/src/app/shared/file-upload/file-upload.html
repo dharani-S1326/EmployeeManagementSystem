@@ -1,0 +1,29 @@
+<div class="file-upload-container">
+  <label class="file-label">
+    {{ label }}
+  </label>
+
+  <input
+    #fileInput
+    type="file"
+    class="file-input"
+    [accept]="accept"
+    (change)="onFileChange($event)"
+  />
+
+  <div class="selected-file" *ngIf="selectedFile">
+    <span class="file-name">
+      <i class="bi bi-file-earmark-check"></i>
+
+      {{ selectedFile.name }}
+    </span>
+
+    <button type="button" class="remove-file" (click)="removeFile(fileInput)">Remove</button>
+  </div>
+
+  <div class="file-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <small class="file-help"> Allowed: PDF, JPG, JPEG, PNG. Maximum size: {{ maxSizeMB }} MB. </small>
+</div>

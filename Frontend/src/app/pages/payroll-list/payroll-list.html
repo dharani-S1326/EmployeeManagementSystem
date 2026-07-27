@@ -1,0 +1,523 @@
+<app-header></app-header>
+<app-toast [visible]="visible" [message]="message" [type]="type"> </app-toast>
+
+<div class="employee-layout">
+  <app-sidebar></app-sidebar>
+
+  <div class="container">
+    <div class="page-header">
+      <h2>Payroll Management</h2>
+
+      <button type="button" class="add-btn" (click)="showGenerateModal = true">
+        + Generate Payroll
+      </button>
+    </div>
+
+    <app-generate-payroll *ngIf="showGenerateModal" (closeModal)="onGeneratePayroll($event)">
+    </app-generate-payroll>
+
+    <div class="search-filter">
+      <!-- SEARCH -->
+
+      <input
+        type="text"
+        placeholder="Search Employee..."
+        [(ngModel)]="searchText"
+        (keyup)="searchEmployee()"
+      />
+
+      <!-- DEPARTMENT FILTER -->
+
+      <select [(ngModel)]="department" (change)="filterDepartment()">
+        <option value="">All Departments</option>
+
+        <option value="HR">HR</option>
+
+        <option value="IT">IT</option>
+
+        <option value="Finance">Finance</option>
+
+        <option value="Admin">Admin</option>
+
+        <option value="Sales">Sales</option>
+
+        <option value="Marketing">Marketing</option>
+      </select>
+
+      <!-- MONTH FILTER -->
+
+      <select [(ngModel)]="month" (change)="filterMonth()">
+        <option value="">All Months</option>
+
+        <option>January</option>
+
+        <option>February</option>
+
+        <option>March</option>
+
+        <option>April</option>
+
+        <option>May</option>
+
+        <option>June</option>
+
+        <option>July</option>
+
+        <option>August</option>
+
+        <option>September</option>
+
+        <option>October</option>
+
+        <option>November</option>
+
+        <option>December</option>
+      </select>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Emp ID</th>
+
+            <th>Employee</th>
+
+            <th>Department</th>
+
+            <th>Designation</th>
+
+            <th>Basic</th>
+
+            <th>Allowance</th>
+
+            <th>Bonus</th>
+
+            <th>Deduction</th>
+
+            <th>Tax</th>
+
+            <th>Net Salary</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of paginatedPayrolls; trackBy: trackByPayrollId">
+            <!-- EMPLOYEE ID -->
+
+            <td>
+              {{ item.employeeId }}
+            </td>
+
+            <!-- EMPLOYEE NAME -->
+
+            <td>
+              {{ item.employeeName }}
+            </td>
+
+            <!-- DEPARTMENT -->
+
+            <td>
+              {{ item.department }}
+            </td>
+
+            <!-- DESIGNATION -->
+
+            <td>
+              {{ item.designation }}
+            </td>
+
+            <!-- BASIC SALARY -->
+
+            <td>
+              {{ item.basicSalary }}
+            </td>
+
+            <!-- ALLOWANCE -->
+
+            <td>
+              {{ item.allowance }}
+            </td>
+
+            <!-- BONUS -->
+
+            <td>
+              {{ item.bonus }}
+            </td>
+
+            <!-- DEDUCTION -->
+
+            <td>
+              {{ item.deduction }}
+            </td>
+
+            <!-- TAX -->
+
+            <td>
+              {{ item.tax }}
+            </td>
+
+            <!-- NET SALARY -->
+
+            <td>
+              {{ item.netSalary }}
+            </td>
+
+            <!-- STATUS -->
+
+            <td>
+              <span class="paid" *ngIf="item.paymentStatus === 'Paid'"> Paid </span>
+
+              <span class="pending" *ngIf="item.paymentStatus === 'Pending'"> Pending </span>
+            </td>
+
+            <!-- PAYMENT DATE -->
+
+            <td>
+              {{ item.paymentDate | date: 'dd-MM-yyyy' }}
+            </td>
+
+            <!-- ACTION BUTTONS -->
+
+            <td>
+              <div class="action-buttons">
+                <app-button text="View" variant="primary" (buttonClick)="openView(item)">
+                </app-button>
+
+                <app-button text="Edit" variant="success" (buttonClick)="openEdit(item)">
+                </app-button>
+
+                <app-button text="Delete" variant="danger" (buttonClick)="openDelete(item)">
+                </app-button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="paginatedPayrolls.length === 0">
+            <td colspan="13" class="no-data">No payroll records found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <!-- FIRST PAGE -->
+
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="changePage(1)"
+        [disabled]="pageNumber === 1"
+      >
+        «
+      </button>
+
+      <!-- PREVIOUS PAGE -->
+
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="changePage(pageNumber - 1)"
+        [disabled]="pageNumber === 1"
+      >
+        ‹
+      </button>
+
+      <!-- PAGE NUMBERS -->
+
+      <button
+        type="button"
+        class="pagination-btn"
+        *ngFor="let page of pages"
+        (click)="changePage(page)"
+        [class.active]="pageNumber === page"
+      >
+        {{ page }}
+      </button>
+
+      <!-- NEXT PAGE -->
+
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="changePage(pageNumber + 1)"
+        [disabled]="pageNumber === totalPages"
+      >
+        ›
+      </button>
+
+      <!-- LAST PAGE -->
+
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="changePage(totalPages)"
+        [disabled]="pageNumber === totalPages"
+      >
+        »
+      </button>
+    </div>
+
+    <div class="pagination-info" *ngIf="totalCount > 0">
+      Page
+      {{ pageNumber }}
+
+      of
+
+      {{ totalPages }}
+
+      — Total Payrolls:
+      {{ totalCount }}
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showViewModal" (click)="closeViewModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <h2>Payroll Details</h2>
+
+    <div class="details-grid">
+      <!-- EMPLOYEE -->
+
+      <div>
+        <strong> Employee </strong>
+      </div>
+
+      <div>
+        {{ selectedPayroll?.employeeName }}
+      </div>
+
+      <!-- DEPARTMENT -->
+
+      <div>
+        <strong> Department </strong>
+      </div>
+
+      <div>
+        {{ selectedPayroll?.department }}
+      </div>
+
+      <!-- DESIGNATION -->
+
+      <div>
+        <strong> Designation </strong>
+      </div>
+
+      <div>
+        {{ selectedPayroll?.designation }}
+      </div>
+
+      <!-- BASIC SALARY -->
+
+      <div>
+        <strong> Basic Salary </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.basicSalary }}
+      </div>
+
+      <!-- ALLOWANCE -->
+
+      <div>
+        <strong> Allowance </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.allowance }}
+      </div>
+
+      <!-- BONUS -->
+
+      <div>
+        <strong> Bonus </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.bonus }}
+      </div>
+
+      <!-- DEDUCTION -->
+
+      <div>
+        <strong> Deduction </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.deduction }}
+      </div>
+
+      <!-- TAX -->
+
+      <div>
+        <strong> Tax </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.tax }}
+      </div>
+
+      <!-- NET SALARY -->
+
+      <div>
+        <strong> Net Salary </strong>
+      </div>
+
+      <div>
+        ₹
+        {{ selectedPayroll?.netSalary }}
+      </div>
+
+      <!-- STATUS -->
+
+      <div>
+        <strong> Status </strong>
+      </div>
+
+      <div>
+        <span class="paid" *ngIf="selectedPayroll?.paymentStatus === 'Paid'"> Paid </span>
+
+        <span class="pending" *ngIf="selectedPayroll?.paymentStatus === 'Pending'"> Pending </span>
+      </div>
+
+      <!-- PAYMENT DATE -->
+
+      <div>
+        <strong> Payment Date </strong>
+      </div>
+
+      <div>
+        {{ selectedPayroll?.paymentDate | date: 'dd-MM-yyyy' }}
+      </div>
+    </div>
+
+    <!-- VIEW CLOSE BUTTON -->
+
+    <div class="button-group">
+      <app-button text="Close" type="button" variant="danger" (buttonClick)="closeViewModal()">
+      </app-button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <h2>Edit Payroll</h2>
+
+    <form [formGroup]="editPayrollForm">
+      <!-- ALLOWANCE -->
+
+      <app-form-field
+        label="Allowance"
+        type="number"
+        placeholder="Enter Allowance"
+        [control]="$any(editPayrollForm.controls['allowance'])"
+        errorMessage="Allowance is required"
+      >
+      </app-form-field>
+
+      <!-- BONUS -->
+
+      <app-form-field
+        label="Bonus"
+        type="number"
+        placeholder="Enter Bonus"
+        [control]="$any(editPayrollForm.controls['bonus'])"
+        errorMessage="Bonus is required"
+      >
+      </app-form-field>
+
+      <!-- DEDUCTION -->
+
+      <app-form-field
+        label="Deduction"
+        type="number"
+        placeholder="Enter Deduction"
+        [control]="$any(editPayrollForm.controls['deduction'])"
+        errorMessage="Deduction is required"
+      >
+      </app-form-field>
+
+      <!-- TAX -->
+
+      <app-form-field
+        label="Tax"
+        type="number"
+        placeholder="Enter Tax"
+        [control]="$any(editPayrollForm.controls['tax'])"
+        errorMessage="Tax is required"
+      >
+      </app-form-field>
+
+      <!-- STATUS -->
+
+      <app-form-field
+        label="Status"
+        type="select"
+        placeholder="Select Status"
+        [control]="$any(editPayrollForm.controls['paymentStatus'])"
+        [options]="paymentStatusOptions"
+        errorMessage="Status is required"
+      >
+      </app-form-field>
+
+      <!-- BUTTONS -->
+
+      <div class="button-group">
+        <app-button text="Cancel" type="button" variant="danger" (buttonClick)="closeEditModal()">
+        </app-button>
+
+        <app-button
+          text="Update"
+          type="button"
+          variant="primary"
+          [disabled]="editPayrollForm.invalid"
+          (buttonClick)="updatePayroll()"
+        >
+        </app-button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <div class="modal-box delete-box" (click)="$event.stopPropagation()">
+    <h2>Delete Payroll</h2>
+
+    <p class="delete-message">
+      Are you sure you want to delete payroll of
+
+      <strong>
+        {{ selectedPayroll?.employeeName }}
+      </strong>
+
+      ?
+    </p>
+
+    <div class="button-group">
+      <app-button
+        text="Cancel"
+        type="button"
+        variant="secondary"
+        (buttonClick)="closeDeleteModal()"
+      >
+      </app-button>
+
+      <app-button text="Delete" type="button" variant="danger" (buttonClick)="confirmDelete()">
+      </app-button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

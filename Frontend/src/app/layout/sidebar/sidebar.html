@@ -1,0 +1,108 @@
+<!-- MOBILE SIDEBAR OVERLAY -->
+
+<div
+  class="sidebar-overlay"
+  *ngIf="sidebarService.sidebarOpen$ | async"
+  (click)="closeSidebar()"
+></div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" [class.mobile-open]="sidebarService.sidebarOpen$ | async">
+  <!-- MOBILE CLOSE BUTTON -->
+
+  <div class="sidebar-mobile-header">
+    <span class="sidebar-mobile-title"> Menu </span>
+
+    <button
+      type="button"
+      class="sidebar-close-btn"
+      (click)="closeSidebar()"
+      aria-label="Close navigation menu"
+    >
+      <span class="material-icons"> close </span>
+    </button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <!-- DASHBOARD - ONLY ONE -->
+
+  <a
+    [routerLink]="dashboardRoute"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    (click)="closeSidebar()"
+  >
+    <span class="material-icons">dashboard</span>
+    <span class="menu-text">Dashboard</span>
+  </a>
+
+  <!-- MY PAYROLL - EMPLOYEE AND HR -->
+
+  <a
+    *ngIf="isEmployee || isHR"
+    routerLink="/my-payroll"
+    routerLinkActive="active"
+    (click)="closeSidebar()"
+  >
+    <span class="material-icons">payments</span>
+    <span class="menu-text">My Payroll</span>
+  </a>
+
+  <!-- EMPLOYEES -->
+
+  <a *ngIf="isAdmin" routerLink="/employees" routerLinkActive="active" (click)="closeSidebar()">
+    <span class="material-icons"> groups </span>
+
+    <span class="menu-text"> Employees </span>
+  </a>
+
+  <!-- PAYROLL -->
+
+  <a *ngIf="isAdmin" routerLink="/payroll" routerLinkActive="active" (click)="closeSidebar()">
+    <span class="material-icons"> payments </span>
+
+    <span class="menu-text"> Payroll </span>
+  </a>
+
+  <!-- APPLY LEAVE -->
+
+  <a routerLink="/apply-leave" routerLinkActive="active" (click)="closeSidebar()">
+    <span class="material-icons"> edit_calendar </span>
+
+    <span class="menu-text"> Apply Leave </span>
+  </a>
+
+  <!-- MY LEAVES -->
+
+  <a routerLink="/my-leaves" routerLinkActive="active" (click)="closeSidebar()">
+    <span class="material-icons"> event_note </span>
+
+    <span class="menu-text"> My Leaves </span>
+  </a>
+
+  <!-- LEAVE REQUESTS -->
+
+  <a
+    *ngIf="canManageLeaves"
+    routerLink="/leave-requests"
+    routerLinkActive="active"
+    (click)="closeSidebar()"
+  >
+    <span class="material-icons"> approval </span>
+
+    <span class="menu-text"> Leave Requests </span>
+  </a>
+
+  <!-- REGISTER EMPLOYEE -->
+
+  <a *ngIf="isAdmin" class="register-menu-link" (click)="openRegisterPopup()">
+    <span class="material-icons"> person_add </span>
+
+    <span class="menu-text"> Register Employee </span>
+  </a>
+</div>
+
+<!-- REGISTER EMPLOYEE POPUP -->
+
+<app-register *ngIf="showRegisterPopup" (closeModal)="closeRegisterPopup()"> </app-register>

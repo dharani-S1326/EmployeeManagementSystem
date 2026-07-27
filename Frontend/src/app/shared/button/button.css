@@ -1,0 +1,196 @@
+button {
+  min-width: 100px;
+
+  height: 40px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  justify-content: right;
+
+  align-items: center;
+
+  gap: 4px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.primary {
+  background: #0d6efd;
+
+  color: white;
+}
+
+.primary:hover {
+  background: #0b5ed7;
+}
+
+.secondary {
+  background: #6c757d;
+
+  color: white;
+}
+
+.secondary:hover {
+  background: #5c636a;
+}
+
+.danger {
+  background: #dc3545;
+
+  color: white;
+}
+
+.danger:hover {
+  background: #bb2d3b;
+}
+
+.success {
+  background: #198754;
+
+  color: white;
+}
+
+.success:hover {
+  background: #157347;
+}
+
+.outline {
+  background: white;
+
+  color: #0d6efd;
+
+  border: 1px solid #0d6efd;
+}
+
+.outline:hover {
+  background: #0d6efd;
+
+  color: white;
+}
+
+button:disabled {
+  background: #cfcfcf;
+
+  cursor: not-allowed;
+}
+button {
+  width: 70%;
+  height: 45px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.primary {
+  background: #0d6efd;
+  color: #fff;
+}
+
+.primary:hover {
+  background: #0b5ed7;
+}
+
+.success {
+  background: #198754;
+  color: #fff;
+}
+
+.success:hover {
+  background: #157347;
+}
+
+.secondary {
+  background: #6c757d;
+  color: #fff;
+}
+
+.secondary:hover {
+  background: #5c636a;
+}
+
+.danger {
+  background: #dc3545;
+  color: #fff;
+}
+
+.outline {
+  background: #fff;
+  color: #0d6efd;
+  border: 1px solid #0d6efd;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between icon and text */
+}
+
+button i {
+  font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end; /* Move buttons to the right */
+  align-items: center;
+  gap: 8px; /* Reduce space between buttons */
+}
+button {
+  min-width: 80px; /* Reduce from 100/140px */
+
+  height: 36px;
+
+  padding: 0 10px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+button {
+  min-width: 125px;
+  height: 36px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.action-buttons {
+  gap: 5px;
+}
+
+.action-buttons app-button {
+  transform: scale(0.88);
+}

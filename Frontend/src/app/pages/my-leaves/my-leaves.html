@@ -1,0 +1,264 @@
+<app-header></app-header>
+
+<div class="leave-layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="leave-container">
+    <div class="page-header">
+      <div class="page-title">
+        <h2>My Leaves</h2>
+
+        <p>View and track your leave requests</p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <!-- TOTAL -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === ''"
+        (click)="filterByStatus('')"
+      >
+        <div class="summary-icon total">
+          <span class="material-icons"> calendar_month </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Total Requests</p>
+
+          <h2>
+            {{ totalLeaves }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- PENDING -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'pending'"
+        (click)="filterByStatus('pending')"
+      >
+        <div class="summary-icon pending">
+          <span class="material-icons"> schedule </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Pending</p>
+
+          <h2>
+            {{ pendingCount }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- APPROVED -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'approved'"
+        (click)="filterByStatus('approved')"
+      >
+        <div class="summary-icon approved">
+          <span class="material-icons"> check_circle </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Approved</p>
+
+          <h2>
+            {{ approvedCount }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- REJECTED -->
+
+      <div
+        class="summary-card"
+        [class.active-card]="statusFilter === 'rejected'"
+        (click)="filterByStatus('rejected')"
+      >
+        <div class="summary-icon rejected">
+          <span class="material-icons"> cancel </span>
+        </div>
+
+        <div class="summary-content">
+          <p>Rejected</p>
+
+          <h2>
+            {{ rejectedCount }}
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="leave-card">
+      <!-- SEARCH -->
+
+      <div class="table-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+
+          <input
+            type="text"
+            placeholder="Search leave type, reason..."
+            [(ngModel)]="searchText"
+            (input)="onSearchChange()"
+          />
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Leave Type</th>
+
+              <th>From Date</th>
+
+              <th>To Date</th>
+
+              <th>Days</th>
+
+              <th>Reason</th>
+
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- LEAVE DATA -->
+
+            <tr *ngFor="let leave of displayedLeaves; trackBy: trackByLeaveId">
+              <!-- LEAVE TYPE -->
+
+              <td>
+                <span class="leave-type">
+                  {{ leave.leaveType }}
+                </span>
+              </td>
+
+              <!-- FROM DATE -->
+
+              <td>
+                {{ leave.fromDate | date: 'dd MMM yyyy' }}
+              </td>
+
+              <!-- TO DATE -->
+
+              <td>
+                {{ leave.toDate | date: 'dd MMM yyyy' }}
+              </td>
+
+              <!-- DAYS -->
+
+              <td>
+                <span class="days-badge">
+                  {{ leave.noOfDays }}
+                </span>
+              </td>
+
+              <!-- REASON -->
+
+              <td>
+                <div class="reason-text" [title]="leave.reason">
+                  {{ leave.reason }}
+                </div>
+              </td>
+
+              <!-- STATUS -->
+
+              <td>
+                <span class="status-badge" [ngClass]="leave.status?.toLowerCase()">
+                  {{ leave.status }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="displayedLeaves.length === 0">
+              <td colspan="6" class="empty-cell">
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <i class="bi bi-calendar-x"></i>
+                  </div>
+
+                  <h3>No leave requests found</h3>
+
+                  <p>No leave requests match the selected filter.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- IMPORTANT: OUTSIDE table-wrapper -->
+
+      <div class="pagination" *ngIf="totalPages > 1">
+        <!-- FIRST PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(1)"
+          [disabled]="pageNumber === 1"
+        >
+          «
+        </button>
+
+        <!-- PREVIOUS PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(pageNumber - 1)"
+          [disabled]="pageNumber === 1"
+        >
+          ‹
+        </button>
+
+        <!-- PAGE NUMBERS -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          *ngFor="let page of pages"
+          (click)="changePage(page)"
+          [class.active]="pageNumber === page"
+        >
+          {{ page }}
+        </button>
+
+        <!-- NEXT PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(pageNumber + 1)"
+          [disabled]="pageNumber === totalPages"
+        >
+          ›
+        </button>
+
+        <!-- LAST PAGE -->
+
+        <button
+          type="button"
+          class="pagination-btn"
+          (click)="changePage(totalPages)"
+          [disabled]="pageNumber === totalPages"
+        >
+          »
+        </button>
+      </div>
+
+      <div class="pagination-info" *ngIf="totalCount > 0">
+        Page {{ pageNumber }} of {{ totalPages }} — Total Leaves: {{ totalCount }}
+      </div>
+    </div>
+  </main>
+</div>
+
+<app-footer></app-footer>

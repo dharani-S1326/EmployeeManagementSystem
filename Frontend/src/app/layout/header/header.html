@@ -1,0 +1,105 @@
+<header class="header">
+  <button type="button" class="mobile-menu-btn" (click)="toggleSidebar()" aria-label="Open navigation menu">
+    <span class="material-icons"> menu </span>
+  </button>
+
+  <div class="sidebar-logo" (click)="goToDashboard()">
+    <img src="/assets/logo.png" alt="Logo" />
+  </div>
+
+  <div class="header-left">
+    <h2>Employee Management System</h2>
+  </div>
+
+  <div class="header-right">
+    <button type="button" class="theme-toggle" (click)="toggleTheme()"
+      [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+      <i class="bi" [ngClass]="isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'"> </i>
+    </button>
+
+    <div class="profile-section">
+      <!-- PROFILE BUTTON -->
+
+      <button type="button" class="profile-btn" (click)="toggleProfile(); $event.stopPropagation()">
+        <!-- PROFILE IMAGE -->
+
+        <img *ngIf="profile?.profileImageUrl; else defaultAvatar" [src]="profile?.profileImageUrl" class="profile-image"
+          alt="Profile" />
+
+        <!-- DEFAULT INITIALS -->
+
+        <ng-template #defaultAvatar>
+          <span class="profile-initials">
+            {{ getInitials() }}
+          </span>
+        </ng-template>
+      </button>
+
+      <div class="profile-dropdown" *ngIf="showProfile" (click)="$event.stopPropagation()">
+        <!-- PROFILE IMAGE SECTION -->
+
+        <div class="profile-header">
+          <img [src]="
+              profile?.profileImageUrl ||
+              'https://ui-avatars.com/api/?background=6D5BD0&color=fff&name=' + loggedInName
+            " class="profile-avatar" alt="Profile" />
+
+          <!-- IMAGE UPLOAD -->
+
+          <label class="upload-btn">
+            <span class="material-icons"> photo_camera </span>
+
+            <input hidden type="file" accept=".jpg,.jpeg,.png" (change)="onHeaderImageSelected($event)" />
+          </label>
+        </div>
+
+        <div class="profile-info">
+          <h3 class="profile-title">My Profile</h3>
+
+          <div class="profile-details">
+            <!-- NAME -->
+
+            <div class="profile-row">
+              <span class="profile-label"> Name </span>
+
+              <span class="profile-colon"> : </span>
+
+              <span class="profile-value">
+                {{ loggedInName }}
+              </span>
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="profile-row">
+              <span class="profile-label"> Email </span>
+
+              <span class="profile-colon"> : </span>
+
+              <span class="profile-value email-value">
+                {{ loggedInEmail }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="profile-menu-actions">
+          <!-- CHANGE PASSWORD -->
+
+          <app-button text="Change Password" type="button" variant="primary" (buttonClick)="openChangePassword()">
+          </app-button>
+
+          <!-- LOGOUT -->
+
+          <app-button text="Logout" type="button" variant="danger" (buttonClick)="logout()">
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<app-change-password *ngIf="isChangePasswordOpen" (closeModal)="closeChangePassword()">
+</app-change-password>
